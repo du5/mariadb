@@ -1,0 +1,30 @@
+version: "3"
+
+services:
+  mariadb:
+    image: mariadb:lts-jammy
+    restart: always
+    environment:
+      - TZ=${TZ}
+      - MARIADB_ROOT_PASSWORD=${MARIADB_ROOT_PASSWORD}
+    volumes:
+      - ./opt/mysql:/var/lib/mysql
+      - ./mysql:/etc/mysql/conf.d
+    ports:
+      - 127.0.0.1:3306:3306/tcp
+    logging:
+      &logging
+      driver: "json-file"
+      options:
+        max-file: "3"
+        max-size: 10m
+
+  phpmyadmin:
+    image: phpmyadmin:latest
+    restart: always
+    ports:
+      - 8080:80/tcp
+    environment:
+      - PMA_HOST=mariadb
+    logging:
+      <<: *logging
