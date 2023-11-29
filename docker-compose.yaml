@@ -1,12 +1,12 @@
 version: "3"
 
 services:
-  mariadb:
-    image: mariadb:lts-jammy
+  mysql:
+    image: mysql:debian
     restart: always
     environment:
       - TZ=${TZ}
-      - MARIADB_ROOT_PASSWORD=${MARIADB_ROOT_PASSWORD}
+      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
     volumes:
       - ./opt/mysql:/var/lib/mysql
       - ./mysql:/etc/mysql/conf.d
@@ -22,9 +22,11 @@ services:
   phpmyadmin:
     image: phpmyadmin:latest
     restart: always
+    depends_on:
+      - mysql
     ports:
       - 8080:80/tcp
     environment:
-      - PMA_HOST=mariadb
+      - PMA_HOST=mysql
     logging:
       <<: *logging
